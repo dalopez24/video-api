@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Header, Query, StreamableFile } from '@nestjs/common';
 import { AppService } from './app.service';
+import { GetVideoDto } from './dto/get-video.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Header('Content-Type', 'video/mp4')
+  async getVideoFromTimestamps(
+    @Query() params: GetVideoDto,
+  ): Promise<StreamableFile> {
+    return await this.appService.getVideoFromLocationCamera(params);
   }
 }
