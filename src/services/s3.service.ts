@@ -11,7 +11,7 @@ import { Readable } from 'stream';
 import { FileSystemService } from './file-system.service';
 
 @Injectable()
-export class S3ServiceService {
+export class S3Service {
   private s3Client: S3Client;
 
   constructor(

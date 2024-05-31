@@ -1,5 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { S3ServiceService } from './services/s3-service.service';
+import { S3Service } from './services/s3.service';
 import { GetVideoDto } from './dto/get-video.dto';
 import { VideoService } from './services/video.service';
 import { createReadStream } from 'fs';
@@ -8,7 +8,7 @@ import { FileSystemService } from './services/file-system.service';
 @Injectable()
 export class AppService {
   constructor(
-    private readonly s3Service: S3ServiceService,
+    private readonly s3Service: S3Service,
     private readonly videoService: VideoService,
     private readonly fileSystemService: FileSystemService,
   ) {}
@@ -62,6 +62,10 @@ export class AppService {
     await this.fileSystemService.unLinkPaths(filePaths);
 
     const stream = createReadStream(mergedVideoPath);
+
+    stream.on('close', () => {
+      this.fileSystemService.unLinkSync(mergedVideoPath);
+    });
     return new StreamableFile(stream);
   }
 }

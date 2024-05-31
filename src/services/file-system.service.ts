@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { resolve as resolvePath } from 'path';
-import { ConfigService } from '@nestjs/config';
 import { existsSync, mkdirSync } from 'fs';
 import { unlink } from 'fs/promises';
 
@@ -8,7 +7,7 @@ import { unlink } from 'fs/promises';
 export class FileSystemService {
   private readonly tempDir: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor() {
     this.tempDir = resolvePath(__dirname, '..', '..', './.temp');
     this.ensureDirectoryExists(this.tempDir);
   }
@@ -21,6 +20,10 @@ export class FileSystemService {
 
   async unLinkPaths(paths: string[]) {
     await Promise.all(paths.map((path) => unlink(path)));
+  }
+
+  async unLinkSync(path: string): Promise<void> {
+    return await unlink(path);
   }
 
   getTempDir(): string {

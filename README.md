@@ -32,6 +32,21 @@
 $ pnpm install
 ```
 
+## Additional Software
+
+This project requires `ffmpeg` to be installed on your local machine. Here are the installation instructions for various platforms:
+
+### MacOS
+
+You can install `ffmpeg` via brew: 
+```bash
+brew install ffmpeg
+```
+### LINUX 
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
 ## Running the app
 
 ```bash
