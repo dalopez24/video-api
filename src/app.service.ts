@@ -4,6 +4,7 @@ import { GetVideoDto } from './dto/get-video.dto';
 import { VideoService } from './services/video.service';
 import { createReadStream } from 'fs';
 import { FileSystemService } from './services/file-system.service';
+import { isFiveMinuteRange } from './utils/time.utils';
 
 @Injectable()
 export class AppService {
@@ -16,17 +17,15 @@ export class AppService {
   async getVideoFromLocationCamera(
     props: GetVideoDto,
   ): Promise<StreamableFile> {
-    // if (!isFiveMinuteRange(props.startDate, props.endDate)) {
-    //   return null;
-    // }
+    if (!isFiveMinuteRange(props.startDate, props.endDate)) {
+      return null;
+    }
 
     const cameraRecords = await this.s3Service.listObjects(
       'grip-lumeo-upload',
       `streams/${props.cameraId}`,
     );
 
-    const startDate = parseInt(props.startDate, 10);
-    const endDate = parseInt(props.endDate, 10);
     const videoKeys = cameraRecords
       .map((record) => {
         const regex = /\/(\d+)\.mp4$/;
@@ -39,7 +38,7 @@ export class AppService {
       .filter((obj) => obj.timestamp !== '')
       .filter((obj) => {
         const timestamp = parseInt(obj.timestamp, 10);
-        return timestamp >= startDate && timestamp <= endDate;
+        return timestamp >= props.startDate && timestamp <= props.endDate;
       });
 
     // Download videos all at once
@@ -62,10 +61,11 @@ export class AppService {
     await this.fileSystemService.unLinkPaths(filePaths);
 
     const stream = createReadStream(mergedVideoPath);
+    const streamableFile = new StreamableFile(stream);
 
     stream.on('close', () => {
       this.fileSystemService.unLinkSync(mergedVideoPath);
     });
-    return new StreamableFile(stream);
+    return streamableFile;
   }
 }

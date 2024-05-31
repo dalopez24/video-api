@@ -8,7 +8,7 @@ export class FileSystemService {
   private readonly tempDir: string;
 
   constructor() {
-    this.tempDir = resolvePath(__dirname, '..', '..', './.temp');
+    this.tempDir = resolvePath(__dirname, './temp');
     this.ensureDirectoryExists(this.tempDir);
   }
 

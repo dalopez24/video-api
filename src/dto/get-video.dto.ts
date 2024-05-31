@@ -1,5 +1,9 @@
+import { IsNumber } from 'class-validator';
+
 export class GetVideoDto {
   cameraId: string;
-  startDate: string;
-  endDate: string;
+  @IsNumber()
+  startDate: number;
+  @IsNumber()
+  endDate: number;
 }
